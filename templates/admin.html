@@ -1,0 +1,408 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Smart Campus</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #202938;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        button {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .home-btn {
+            background: white;
+            color: #172554;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0 18px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card, .section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        .stat-card h3 {
+            margin: 0 0 12px;
+            color: #526078;
+            font-size: 15px;
+        }
+
+        .stat-card p {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            color: #1d4ed8;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            overflow-x: auto;
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 650px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .approve {
+            background: #15803d;
+            color: white;
+            margin: 2px;
+        }
+
+        .reject {
+            background: #b91c1c;
+            color: white;
+            margin: 2px;
+        }
+
+        .status {
+            text-transform: capitalize;
+            font-weight: bold;
+        }
+
+        #message {
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .muted {
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>Smart Campus Admin Dashboard</h2>
+        <button class="home-btn" onclick="goHome()">Back to Website</button>
+    </header>
+
+    <main>
+        <h1>Dashboard Overview</h1>
+        <p class="muted">Manage campus users, lost/found items and claims.</p>
+
+        <div id="message">Loading dashboard...</div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <p id="totalUsers">—</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Items</h3>
+                <p id="totalItems">—</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Lost Items</h3>
+                <p id="lostItems">—</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Found Items</h3>
+                <p id="foundItems">—</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Pending Claims</h3>
+                <p id="pendingClaims">—</p>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2>Claim Requests</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Claimed By</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="claimsTable">
+                    <tr><td colspan="5">Loading claims...</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>Reported Items</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsTable">
+                    <tr><td colspan="5">Loading items...</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>Registered Users</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable">
+                    <tr><td colspan="3">Loading users...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        const message = document.getElementById("message");
+
+        // Safely display text received from the server.
+        function cell(value) {
+            const td = document.createElement("td");
+            td.textContent = value ?? "";
+            return td;
+        }
+
+        function addEmptyRow(tbody, columns, text) {
+            const tr = document.createElement("tr");
+            const td = cell(text);
+            td.colSpan = columns;
+            tr.appendChild(td);
+            tbody.replaceChildren(tr);
+        }
+
+        function goHome() {
+            window.location.href = "/";
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch("/api/admin/data");
+                const data = await response.json();
+
+                if (!response.ok) {
+                    message.textContent =
+                        data.error || "Access denied. Please check your admin login.";
+                    return;
+                }
+
+                const stats = data.stats;
+
+                document.getElementById("totalUsers").textContent =
+                    stats.total_users;
+                document.getElementById("totalItems").textContent =
+                    stats.total_items;
+                document.getElementById("lostItems").textContent =
+                    stats.lost_items;
+                document.getElementById("foundItems").textContent =
+                    stats.found_items;
+                document.getElementById("pendingClaims").textContent =
+                    stats.pending_claims;
+
+                renderClaims(data.claims || []);
+                renderItems(data.items || []);
+                renderUsers(data.users || []);
+
+                message.textContent = "Dashboard loaded successfully.";
+            } catch (error) {
+                message.textContent =
+                    "Could not load dashboard. Check that the Flask server is running.";
+            }
+        }
+
+        function renderClaims(claims) {
+            const tbody = document.getElementById("claimsTable");
+            tbody.replaceChildren();
+
+            if (!claims.length) {
+                addEmptyRow(tbody, 5, "No claim requests found.");
+                return;
+            }
+
+            claims.forEach(claim => {
+                const tr = document.createElement("tr");
+                tr.append(
+                    cell(claim.itemName),
+                    cell(claim.claimer),
+                    cell(claim.reason),
+                    cell(claim.status)
+                );
+
+                const action = document.createElement("td");
+
+                if (claim.status === "pending") {
+                    const approve = document.createElement("button");
+                    approve.textContent = "Approve";
+                    approve.className = "approve";
+                    approve.addEventListener("click", () =>
+                        decideClaim(claim.id, "approved")
+                    );
+
+                    const reject = document.createElement("button");
+                    reject.textContent = "Reject";
+                    reject.className = "reject";
+                    reject.addEventListener("click", () =>
+                        decideClaim(claim.id, "rejected")
+                    );
+
+                    action.append(approve, reject);
+                } else {
+                    action.textContent = "No action";
+                }
+
+                tr.appendChild(action);
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderItems(items) {
+            const tbody = document.getElementById("itemsTable");
+            tbody.replaceChildren();
+
+            if (!items.length) {
+                addEmptyRow(tbody, 5, "No items reported yet.");
+                return;
+            }
+
+            items.forEach(item => {
+                const tr = document.createElement("tr");
+                tr.append(
+                    cell(item.name),
+                    cell(item.type),
+                    cell(item.category),
+                    cell(item.location),
+                    cell(item.status)
+                );
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById("usersTable");
+            tbody.replaceChildren();
+
+            if (!users.length) {
+                addEmptyRow(tbody, 3, "No users registered yet.");
+                return;
+            }
+
+            users.forEach(user => {
+                const tr = document.createElement("tr");
+                tr.append(
+                    cell(user.name),
+                    cell(user.email),
+                    cell(user.role)
+                );
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function decideClaim(id, decision) {
+            const confirmed = confirm(
+                "Are you sure you want to " + decision + " this claim?"
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch(
+                    `/api/claims/${id}/decision`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ decision: decision })
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    alert(result.error || "Could not update claim.");
+                    return;
+                }
+
+                alert("Claim " + decision + " successfully.");
+                await loadDashboard();
+            } catch (error) {
+                alert("Server connection failed. Please try again.");
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>

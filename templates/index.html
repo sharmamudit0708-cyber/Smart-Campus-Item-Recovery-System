@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Campus Item Recovery System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="navbar">
+
+    <div class="logo">
+        <div class="logo-box">SC</div>
+
+        <div>
+            <h2>Smart Campus</h2>
+            <p>Item Recovery System</p>
+        </div>
+    </div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#report">Report Item</a>
+        <a href="#items">Items</a>
+        <a href="#claims">Claims</a>
+    </nav>
+
+    <div class="user-section">
+
+        <span id="userName">Guest</span>
+
+        <button id="loginButton" class="outline-btn" onclick="openLogin()">
+            Login / Register
+        </button>
+        <button id="logoutButton" class="outline-btn" onclick="logoutUser()" style="display:none">
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ================= HOME ================= -->
+
+<section id="home" class="hero">
+
+    <div class="hero-text">
+
+        <span class="small-title">
+            COLLEGE MINI PROJECT
+        </span>
+
+        <h1>
+            Find It.<br>
+            Match It.<br>
+            <span>Get It Back.</span>
+        </h1>
+
+        <p>
+            Smart Campus Item Recovery System helps students
+            report lost and found items, find matching items,
+            claim them and verify ownership.
+        </p>
+
+        <div class="hero-buttons">
+
+            <button class="primary-btn"
+                    onclick="openReport('lost')">
+                Report Lost Item
+            </button>
+
+            <button class="secondary-btn"
+                    onclick="openReport('found')">
+                Report Found Item
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="flow-card">
+
+        <h3>Recovery Flow</h3>
+
+        <div class="flow">
+
+            <div>
+                <span>01</span>
+                <p>Report</p>
+            </div>
+
+            <b>→</b>
+
+            <div>
+                <span>02</span>
+                <p>Match</p>
+            </div>
+
+            <b>→</b>
+
+            <div>
+                <span>03</span>
+                <p>Claim</p>
+            </div>
+
+            <b>→</b>
+
+            <div>
+                <span>04</span>
+                <p>Verify</p>
+            </div>
+
+        </div>
+
+        <div class="security">
+            ✓ Ownership verification protects genuine owners.
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= STATISTICS ================= -->
+
+<section class="statistics" id="statistics">
+
+</section>
+
+
+<!-- ================= REPORT ITEM ================= -->
+
+<section id="report" class="section">
+
+    <div class="section-title">
+
+        <span>STEP 1</span>
+
+        <h2>Report Lost or Found Item</h2>
+
+        <p>
+            Enter the item details and upload an image.
+            The system will store the report and search
+            for matching items.
+        </p>
+
+    </div>
+
+
+    <form id="reportForm">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>Report Type</label>
+
+                <select id="reportType">
+
+                    <option value="lost">
+                        Lost Item
+                    </option>
+
+                    <option value="found">
+                        Found Item
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Item Name</label>
+
+                <input
+                    type="text"
+                    id="itemName"
+                    placeholder="Example: Black Wallet"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Category</label>
+
+                <select id="category">
+
+                    <option>Electronics</option>
+                    <option>Documents</option>
+                    <option>Wallet / Money</option>
+                    <option>Keys</option>
+                    <option>Bag</option>
+                    <option>Books</option>
+                    <option>Clothing</option>
+                    <option>Other</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Location</label>
+
+                <input
+                    type="text"
+                    id="location"
+                    placeholder="Example: Library"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Date</label>
+
+                <input
+                    type="date"
+                    id="itemDate"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Contact</label>
+
+                <input
+                    type="text"
+                    id="contact"
+                    placeholder="Email or phone"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group full">
+
+                <label>Description</label>
+
+                <textarea
+                    id="description"
+                    placeholder="Describe color, brand, unique marks etc."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <div class="upload-box full">
+
+                <label>Upload Item Image</label>
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                >
+
+                <img
+                    id="imagePreview"
+                    class="image-preview"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="form-buttons">
+
+            <button
+                type="reset"
+                class="outline-btn">
+                Clear
+            </button>
+
+            <button
+                type="submit"
+                class="primary-btn">
+                Store & Search for Matches
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+
+<!-- ================= ITEMS ================= -->
+
+<section id="items" class="section">
+
+    <div class="section-header">
+
+        <div>
+
+            <span>STEP 2</span>
+
+            <h2>
+                System Searches for Matching Items
+            </h2>
+
+            <p>
+                The system checks item name, category,
+                location and description.
+            </p>
+
+        </div>
+
+
+        <div class="filters">
+
+            <select id="filterType">
+
+                <option value="all">
+                    All Items
+                </option>
+
+                <option value="lost">
+                    Lost
+                </option>
+
+                <option value="found">
+                    Found
+                </option>
+
+            </select>
+
+
+            <input
+                type="text"
+                id="searchBox"
+                placeholder="Search items..."
+            >
+
+        </div>
+
+    </div>
+
+
+    <div id="matchMessage"></div>
+
+
+    <div
+        id="itemGrid"
+        class="item-grid">
+    </div>
+
+</section>
+
+
+<!-- ================= CLAIMS ================= -->
+
+<section id="claims" class="section">
+
+    <div class="section-title">
+
+        <span>STEP 3 - 5</span>
+
+        <h2>Claims & Ownership Verification</h2>
+
+        <p>
+            Claim a matching item and provide information
+            to verify ownership.
+        </p>
+
+    </div>
+
+
+    <div id="claimsList"></div>
+
+</section>
+
+
+<!-- ================= NOTIFICATIONS ================= -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <div>
+
+            <span>NOTIFICATIONS</span>
+
+            <h2>Recent Notifications</h2>
+
+        </div>
+
+        <button
+            class="outline-btn"
+            onclick="clearNotifications()">
+            Clear
+        </button>
+
+    </div>
+
+
+    <div id="notificationsList"></div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div>
+
+        <strong>
+            Smart Campus Item Recovery System
+        </strong>
+
+        <p>
+            College Mini Project
+        </p>
+
+    </div>
+
+    <p>
+        Lost → Match → Claim → Verify → Return
+    </p>
+
+</footer>
+
+
+<!-- ================= LOGIN / REGISTER MODAL ================= -->
+<div id="loginModal" class="modal">
+    <div class="modal-box">
+        <button class="close" onclick="closeLogin()">×</button>
+        <span>USER ACCESS</span>
+        <h2>User Login / Register</h2>
+
+        <label for="authMode">Choose action</label>
+        <select id="authMode" onchange="updateAuthMode()">
+            <option value="login">Login</option>
+            <option value="register">Create new account</option>
+        </select>
+
+        <div id="authNameGroup" style="display:none">
+            <label for="loginName">Your Name</label>
+            <input id="loginName" placeholder="Enter your name" autocomplete="name">
+        </div>
+
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" placeholder="Enter your email" autocomplete="email" required>
+
+        <label for="loginPassword">Password (minimum 8 characters)</label>
+        <input id="loginPassword" type="password" placeholder="Enter password" autocomplete="current-password" minlength="8" required>
+
+        <button id="authSubmitButton" class="primary-btn full-btn" onclick="loginUser()">Login</button>
+    </div>
+</div>
+
+
+<!-- ================= CLAIM MODAL ================= -->
+
+<div
+    id="claimModal"
+    class="modal">
+
+    <div class="modal-box">
+
+        <button
+            class="close"
+            onclick="closeClaim()">
+            ×
+        </button>
+
+        <span>OWNERSHIP VERIFICATION</span>
+
+        <h2>
+            Claim Item
+        </h2>
+
+        <p id="claimItemName"></p>
+
+        <input
+            type="hidden"
+            id="claimItemId"
+        >
+
+        <label>
+            Why is this your item?
+        </label>
+
+        <textarea
+            id="claimReason"
+            placeholder="Mention unique marks, contents, serial number etc."
+        ></textarea>
+
+        <label>
+            Verification Detail
+        </label>
+
+        <input
+            id="claimProof"
+            placeholder="Example: last 4 digits of serial number"
+        >
+
+        <button
+            class="primary-btn full-btn"
+            onclick="submitClaim()">
+
+            Submit Claim
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<div id="toast"></div>
+
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

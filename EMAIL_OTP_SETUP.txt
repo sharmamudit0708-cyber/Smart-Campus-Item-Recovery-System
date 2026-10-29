@@ -1,0 +1,13 @@
+SMART CAMPUS ITEM RECOVERY SYSTEM - PASSWORD LOGIN SETUP
+
+Email OTP has been removed. Users create an account with name, email, and a password (minimum 8 characters). The password is stored in the SQLite database as a secure hash, not as readable text. For later visits, users log in using the same email and password.
+
+SETUP
+1. Keep your existing project backup.
+2. Create a local .env file using .env.example as a starting point.
+3. Set SECRET_KEY to a long random private value. Set ADMIN_EMAIL to the email address that should have the admin role (optional).
+4. Open Command Prompt in this folder and run: python -m pip install -r requirements.txt
+5. Run: python app.py
+6. Open http://127.0.0.1:5000
+
+No email SMTP settings are needed. Never share your .env file. Existing user accounts continue to work if their password hashes are in the same campus.db database.
